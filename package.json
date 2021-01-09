@@ -1,0 +1,52 @@
+{
+  "name": "objectified-array",
+  "version": "1.0.0",
+  "description": "Tiny, zero-dependency router with route param and query parsing.",
+  "main": "./dist/objectified-array.min.js",
+  "types": "./dist/objectified-array.d.ts",
+  "files": [
+    "dist/objectified-array.js",
+    "dist/objectified-array.min.js",
+    "dist/objectified-array.d.ts"
+  ],
+  "keywords": [
+    "array",
+    "object",
+    "indexed",
+    "groups",
+    "class",
+    "fast",
+    "automatic",
+    "native"
+  ],
+  "scripts": {
+    "test": "npx eslint src && jest --verbose --coverage",
+    "verify": "echo 'verifying module...' && yarn build && yarn test",
+    "dev": "yarn test - --watch",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "prerelease": "yarn verify",
+    "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/objectified-array.d.ts dist",
+    "build": "terser -c -m toplevel -- dist/objectified-array.js  > dist/objectified-array.min.js",
+    "release": "release --tag --push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwhitley/objectified-array.git"
+  },
+  "author": "Kevin R. Whitley <krwhitley@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kwhitley/objectified-array/issues"
+  },
+  "homepage": "https://github.com/kwhitley/objectified-array#readme",
+  "devDependencies": {
+    "coveralls": "^3.0.13",
+    "eslint": "^7.2.0",
+    "eslint-plugin-jest": "^23.13.2",
+    "fs-extra": "^9.0.0",
+    "jest": "^25.3.0",
+    "rimraf": "^3.0.2",
+    "terser": "^4.6.11",
+    "yarn-release": "^1.10.2"
+  }
+}
