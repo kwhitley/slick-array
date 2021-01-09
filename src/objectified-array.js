@@ -1,13 +1,30 @@
 const isClass = v => typeof v === 'function' && v.toString().match(/^\s*class\s+/)
 
 class ObjectifiedArray extends Array {
-  constructor(config = {}) {
+  constructor(...args) {
+    let config = args.pop()
+    if (typeof config !== 'object' || Array.isArray(config)) {
+      if (config) {
+        args.push(config)
+      }
+      config = {}
+    }
+
     const {
       by = {},
       groups = {},
       items = [],
       as = undefined // optional constructor for new items
     } = config
+
+    // prepend normal array stuff
+    if (args.length) {
+      if (args.length > 1) {
+        items.unshift(...args)
+      } else {
+        items.unshift(...Array(...args))
+      }
+    }
 
     super()
 

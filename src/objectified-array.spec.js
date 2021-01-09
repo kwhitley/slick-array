@@ -24,7 +24,34 @@ class Cat {
   }
 }
 
-describe('Class: ObjectifiedArray(config:object)', () => {
+describe('Class: ObjectifiedArray(...args, config:object?)', () => {
+  describe('CONSTRUCTOR', () => {
+    describe('honors native constructor', () => {
+      it('new ObjectifiedArray(1, 2, 6) --> [1,2,6]', () => {
+        const items = new ObjectifiedArray(...NUMBERS)
+        expect(items[2]).toEqual(6)
+      })
+      it('new ObjectifiedArray(1, 2, 6, {config}) --> [1,2,6]', () => {
+        const items = new ObjectifiedArray(...NUMBERS, { by: { twoX: i => i*2 }})
+        expect(items[2]).toEqual(6)
+        expect(items.by.twoX[4]).toBe(2)
+      })
+      it('new ObjectifiedArray(3) --> [undefined, undefined, undefined]', () => {
+        const items = new ObjectifiedArray(3)
+        expect(items.length).toEqual(3)
+      })
+      it('new ObjectifiedArray(1, 2, 6, { items: [7] }) --> [1,2,6,7]', () => {
+        const items = new ObjectifiedArray(...NUMBERS, { items: [7] })
+        expect(items.length).toEqual(4)
+        expect(Array.from(items)).toEqual([...NUMBERS, 7])
+      })
+      it('new ObjectifiedArray(2, { items: [7] }) --> [undefined, undefined, 7]', () => {
+        const items = new ObjectifiedArray(2, { items: [7] })
+        expect(items.length).toEqual(3)
+        expect(Array.from(items)).toEqual([undefined, undefined, 7])
+      })
+    })
+  })
   describe('CONFIG', () => {
     describe('items:Array = []', () => {
       it('populates self with items', () => {
