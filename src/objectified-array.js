@@ -1,5 +1,13 @@
 const isClass = v => typeof v === 'function' && v.toString().match(/^\s*class\s+/)
 
+const unifyBy = by => {
+  if (typeof by === 'string') return { [by]: i => i[by] }
+  if (Array.isArray(by)) {
+    return by.reduce((acc, key) => (acc[key] = i => i[key]) && acc, {})
+  }
+  return by
+}
+
 class ObjectifiedArray extends Array {
   constructor(...args) {
     let config = args.pop()
@@ -32,7 +40,7 @@ class ObjectifiedArray extends Array {
     this.by = {}
     this.groups = {}
     this.$ = {
-      by,
+      by: unifyBy(by),
       as,
       groups,
     }

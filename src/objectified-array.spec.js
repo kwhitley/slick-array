@@ -17,22 +17,21 @@ class AdvancedConstructor {
   }
 }
 
-
 class Cat {
   constructor(config = {}) {
     Object.assign(this, config)
   }
 }
 
-describe('Class: ObjectifiedArray(...args, config:object?)', () => {
-  describe('CONSTRUCTOR', () => {
-    describe('honors native constructor', () => {
-      it('new ObjectifiedArray(1, 2, 6) --> [1,2,6]', () => {
+describe('Class: ObjectifiedArray(...args, config?:object)', () => {
+  describe('constructor()', () => {
+    describe('honors native Array constructor', () => {
+      it('new ObjectifiedArray(1, 2, 6) --> [1, 2, 6]', () => {
         const items = new ObjectifiedArray(...NUMBERS)
         expect(items[2]).toEqual(6)
       })
-      it('new ObjectifiedArray(1, 2, 6, {config}) --> [1,2,6]', () => {
-        const items = new ObjectifiedArray(...NUMBERS, { by: { twoX: i => i*2 }})
+      it('new ObjectifiedArray(1, 2, 6, {config}) --> [1, 2, 6]', () => {
+        const items = new ObjectifiedArray(...NUMBERS, { by: { twoX: i => i*2 } })
         expect(items[2]).toEqual(6)
         expect(items.by.twoX[4]).toBe(2)
       })
@@ -40,7 +39,7 @@ describe('Class: ObjectifiedArray(...args, config:object?)', () => {
         const items = new ObjectifiedArray(3)
         expect(items.length).toEqual(3)
       })
-      it('new ObjectifiedArray(1, 2, 6, { items: [7] }) --> [1,2,6,7]', () => {
+      it('new ObjectifiedArray(1, 2, 6, { items: [7] }) --> [1, 2, 6, 7]', () => {
         const items = new ObjectifiedArray(...NUMBERS, { items: [7] })
         expect(items.length).toEqual(4)
         expect(Array.from(items)).toEqual([...NUMBERS, 7])
@@ -50,9 +49,14 @@ describe('Class: ObjectifiedArray(...args, config:object?)', () => {
         expect(items.length).toEqual(3)
         expect(Array.from(items)).toEqual([undefined, undefined, 7])
       })
+      it(`new ObjectifiedArray('abc', 'def') --> ['abc', 'def']`, () => {
+        const items = new ObjectifiedArray('abc', 'def')
+        expect(items.length).toEqual(2)
+        expect(Array.from(items)).toEqual(['abc', 'def'])
+      })
     })
   })
-  describe('CONFIG', () => {
+  describe('config options (all are optional)', () => {
     describe('items:Array = []', () => {
       it('populates self with items', () => {
         const a = new ObjectifiedArray({ items: NUMBERS })
@@ -69,7 +73,7 @@ describe('Class: ObjectifiedArray(...args, config:object?)', () => {
       })
     })
 
-    describe('as:class|function = undefined', () => {
+    describe('as:class|function', () => {
       it('casts items as new class instantiations, when passed a class (e.g. { as: Person })', () => {
         const a = new ObjectifiedArray({
           items: NUMBERS,
@@ -88,15 +92,23 @@ describe('Class: ObjectifiedArray(...args, config:object?)', () => {
         expect(a.length).toBe(5)
       })
 
-      it('casts items with constructor function, when passed a function (e.g. { as: v => String(v) })', () => {
+      it('casts items with function, when passed a function (e.g. { as: v => `${v}` })', () => {
         const a = new ObjectifiedArray({
           items: NUMBERS,
-          as: v => String(v),
+          as: v => `${v}`,
         })
         expect(Array.from(a)).toEqual(['1', '2', '6'])
       })
 
-      it('can use multi-param class constructors, e.g. constructor(a,b)', () => {
+      it('casts items with constructor function, when passed a constructor function (e.g. { as: String })', () => {
+        const a = new ObjectifiedArray({
+          items: NUMBERS,
+          as: String,
+        })
+        expect(Array.from(a)).toEqual(['1', '2', '6'])
+      })
+
+      it('can use multi-param class constructors, e.g. constructor(a,b) - EXPERIMENTAL', () => {
         const a = new ObjectifiedArray({ as: AdvancedConstructor })
         a.push('foo', 'bar')
         expect(a[0]).toEqual({ a: 'foo', b: 'bar' })
@@ -104,154 +116,184 @@ describe('Class: ObjectifiedArray(...args, config:object?)', () => {
       })
     })
 
-    it('by:object --> map of index-getters, e.g. by: { id: i => i.id }', () => {
-      const a = new ObjectifiedArray({ by: { id: i => i.id } })
+    describe('by:string|array[string]|object --> automatically indexes by these key(s)', () => {
+      it(`by:string --> { by: 'name' }`, () => {
+        const a = new ObjectifiedArray({ by: 'name' })
 
-      expect(typeof a.$.by.id).toBe('function')
+        expect(typeof a.$.by.name).toBe('function')
+      })
+      it(`by:array[string] --> { by: ['id', 'name'] }`, () => {
+        const a = new ObjectifiedArray({ by: ['id', 'name'] })
+
+        expect(typeof a.$.by.id).toBe('function')
+        expect(typeof a.$.by.name).toBe('function')
+      })
+      it('by:object --> { by: { id: i => i.id, name => i.name } }', () => {
+        const a = new ObjectifiedArray({ by: { id: i => i.id } })
+
+        expect(typeof a.$.by.id).toBe('function')
+      })
     })
 
-    it('groups:object --> map of group-definitions, e.g. by: { hasId: i => !!i.id }', () => {
-      const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
+    describe('groups:object --> automatically creates groups based on filter functions', () => {
+      // it(`groups:string --> map of group-definitions, e.g. { groups: 'age' }`, () => {
+      //   const a = new ObjectifiedArray({
+      //     groups: `age`,
+      //     items: [
+      //       { age: 4, name: 'Paul' },
+      //       { age: 4, name: 'Mary' },
+      //       { age: 6, name: 'Jones' },
+      //     ]
+      //   })
 
-      expect(typeof a.groups.hasId).toBe('object')
-      expect(typeof a.$.groups.hasId).toBe('function')
+      //   expect(typeof a.groups.age[4].length).toBe(2)
+      //   expect(typeof a.groups.age[6].length).toBe(1)
+      // })
+      it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
+        const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
+
+        expect(typeof a.groups.hasId).toBe('object')
+        expect(typeof a.$.groups.hasId).toBe('function')
+      })
     })
   })
 
-  describe('MODIFIED BUILT-IN METHODS (Array)', () => {
-    describe('.pop()', () => {
-      it('removes item from end', () => {
-        const a = new ObjectifiedArray({ items: NUMBERS })
-        const b = a.pop()
+  describe('BEHAVIOR', () => {
+    describe('Modified native Array methods', () => {
+      describe('.pop()', () => {
+        it('removes item from end', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = a.pop()
 
-        expect(a.length).toBe(2)
-        expect(b).toBe(6)
-      })
-    })
-
-    describe('.push(item1, item2, ...)', () => {
-      it('adds item(s) to end', () => {
-        const a = new ObjectifiedArray()
-        a.push(6)
-
-        expect(a.length).toBe(1)
-      })
-    })
-
-    describe('.shift()', () => {
-      it('removes item from start', () => {
-        const a = new ObjectifiedArray({ items: NUMBERS })
-        const b = a.shift()
-
-        expect(a.length).toBe(2)
-        expect(b).toBe(1)
-      })
-    })
-
-    describe('.splice()', () => {
-      it('removes item from middle', () => {
-        const a = new ObjectifiedArray({
-          items: NUMBERS,
-          by: {
-            triple: i => i * 3,
-          },
-          groups: {
-            under4: i => i < 4,
-          }
+          expect(a.length).toBe(2)
+          expect(b).toBe(6)
         })
-        expect(a.by.triple[3]).toBe(1)
-        const b = a.splice(1, 1) // remove one
+      })
 
-        expect(a.length).toBe(2)
-        expect(b.length).toEqual(1)
-        expect(a.by.triple[6]).toBe(undefined)
+      describe('.push(item1, item2, ...)', () => {
+        it('adds item(s) to end', () => {
+          const a = new ObjectifiedArray()
+          a.push(6)
+
+          expect(a.length).toBe(1)
+        })
+      })
+
+      describe('.shift()', () => {
+        it('removes item from start', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = a.shift()
+
+          expect(a.length).toBe(2)
+          expect(b).toBe(1)
+        })
+      })
+
+      describe('.splice()', () => {
+        it('removes item from middle', () => {
+          const a = new ObjectifiedArray({
+            items: NUMBERS,
+            by: {
+              triple: i => i * 3,
+            },
+            groups: {
+              under4: i => i < 4,
+            }
+          })
+          expect(a.by.triple[3]).toBe(1)
+          const b = a.splice(1, 1) // remove one
+
+          expect(a.length).toBe(2)
+          expect(b.length).toEqual(1)
+          expect(a.by.triple[6]).toBe(undefined)
+        })
+      })
+
+      describe('.unshift(item1, item2, ...)', () => {
+        it('adds item(s) to start', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          a.unshift(9)
+          expect(a.length).toBe(4)
+          expect(Array.from(a)).toEqual([9, 1, 2, 6])
+        })
       })
     })
 
-    describe('.unshift(item1, item2, ...)', () => {
-      it('adds item(s) to start', () => {
-        const a = new ObjectifiedArray({ items: NUMBERS })
-        a.unshift(9)
-        expect(a.length).toBe(4)
-        expect(Array.from(a)).toEqual([9, 1, 2, 6])
+    describe('new methods', () => {
+      describe('.add(item1, item2, ...', () => {
+        it('adds items to end (mirrors push)', () => {
+          const a = new ObjectifiedArray({ items: [1, 2] })
+          a.add(6)
+          a.add(7, 8)
+
+          expect(Array.from(a)).toEqual([1, 2, 6, 7, 8])
+        })
+      })
+
+      describe('.remove(item1, item2, ...)', () => {
+        it('removes item(s)', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          a.remove(2)
+          expect(Array.from(a)).toEqual([1, 6])
+
+          const removed = a.remove(1, 6)
+          expect(a.length).toBe(0)
+          expect(removed).toEqual([1, 6])
+        })
+
+        it('works with by/groups and with classes (advanced)', () => {
+          const cats = new ObjectifiedArray({
+            items: CATS,
+            as: Cat,
+            by: {
+              name: c => c.name,
+            },
+            groups: {
+              startsWithF: i => i.name.match(/^f/i)
+            }
+          })
+          const Fluffy = cats.find(c => c.name === 'Fluffy')
+          expect(cats.by.name.Fluffy).toBe(Fluffy)
+          expect(cats.groups.startsWithF.includes(Fluffy)).toBe(true)
+
+          const removed = cats.remove(Fluffy)
+          expect(cats.length).toBe(2)
+          expect(cats.by.name.Fluffy).toBe(undefined)
+          expect(removed).toBe(Fluffy)
+          expect(cats.groups.startsWithF.includes(Fluffy)).toBe(false)
+        })
       })
     })
-  })
 
-  describe('EXTENDED METHODS', () => {
-    describe('.add(item1, item2, ...', () => {
-      it('adds items to end (mirrors push)', () => {
-        const a = new ObjectifiedArray({ items: [1, 2] })
-        a.add(6)
-        a.add(7, 8)
-
-        expect(Array.from(a)).toEqual([1, 2, 6, 7, 8])
-      })
-    })
-
-    describe('.remove(item1, item2, ...)', () => {
-      it('removes item(s)', () => {
-        const a = new ObjectifiedArray({ items: NUMBERS })
-        a.remove(2)
-        expect(Array.from(a)).toEqual([1, 6])
-
-        const removed = a.remove(1, 6)
-        expect(a.length).toBe(0)
-        expect(removed).toEqual([1, 6])
-      })
-
-      it('works with by/groups and with classes (advanced)', () => {
-        const cats = new ObjectifiedArray({
+    describe('Added properties', () => {
+      it('.by[key] --> accessible when mapped with "by" option', () => {
+        const a = new ObjectifiedArray({
           items: CATS,
           as: Cat,
           by: {
-            name: c => c.name,
+            id: i => i.id,
+          }
+        })
+
+        expect(a.length).toEqual(3)
+        expect(a.by.id[6].name).toEqual('Kitty')
+      })
+
+      it('.groups[key] --> returns array of matching items', () => {
+        const a = new ObjectifiedArray({
+          items: CATS,
+          as: Cat,
+          by: {
+            id: i => i.id,
           },
           groups: {
             startsWithF: i => i.name.match(/^f/i)
           }
         })
-        const Fluffy = cats.find(c => c.name === 'Fluffy')
-        expect(cats.by.name.Fluffy).toBe(Fluffy)
-        expect(cats.groups.startsWithF.includes(Fluffy)).toBe(true)
 
-        const removed = cats.remove(Fluffy)
-        expect(cats.length).toBe(2)
-        expect(cats.by.name.Fluffy).toBe(undefined)
-        expect(removed).toBe(Fluffy)
-        expect(cats.groups.startsWithF.includes(Fluffy)).toBe(false)
+        expect(a.length).toEqual(3)
+        expect(a.groups.startsWithF.length).toBe(1)
       })
-    })
-  })
-
-  describe('EXTENDED PROPERTIES', () => {
-    it('.by[key] --> accessible when mapped with "by" option', () => {
-      const a = new ObjectifiedArray({
-        items: CATS,
-        as: Cat,
-        by: {
-          id: i => i.id,
-        }
-      })
-
-      expect(a.length).toEqual(3)
-      expect(a.by.id[6].name).toEqual('Kitty')
-    })
-
-    it('.groups[key] --> returns array of matching items', () => {
-      const a = new ObjectifiedArray({
-        items: CATS,
-        as: Cat,
-        by: {
-          id: i => i.id,
-        },
-        groups: {
-          startsWithF: i => i.name.match(/^f/i)
-        }
-      })
-
-      expect(a.length).toEqual(3)
-      expect(a.groups.startsWithF.length).toBe(1)
     })
   })
 })
