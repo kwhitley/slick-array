@@ -59,26 +59,25 @@ class ObjectifiedArray extends Array {
   // ADDED FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   add(...items) {
-    if (items.length && this.$.as) {
-      return items.map(i => this.push(i))
+    for (const i of items) {
+      this.push(i)
     }
 
-    return Reflect.apply(this.push, this, items)
+    return items.length > 1 ? items : items[0]
   }
 
   remove(...items) {
     if (items.length) {
       for (const item of items) {
-        const index = this.indexOf(item)
-
-        if (index !== -1) {
+        let index
+        while ((index = this.indexOf(item)) !== -1) {
           super.splice(index, 1)
           this.unindex(item)
         }
       }
     }
 
-    return Array.isArray(items) && items.length > 1 ? items : items[0]
+    return items.length > 1 ? items : items[0]
   }
 
 
@@ -91,8 +90,11 @@ class ObjectifiedArray extends Array {
   }
 
   push(...items) {
+    if (!items.length) return super.push()
+
     items = Reflect.apply(this.index, this, items)
-    Reflect.apply(super.push, this, Array.isArray(items) && items.length ? items : [items])
+
+    return Reflect.apply(super.push, this, Array.isArray(items) && items.length ? items : [items])
   }
 
   shift() {
@@ -104,12 +106,15 @@ class ObjectifiedArray extends Array {
   splice(...args) {
     const items = super.splice(...args)
 
-    return this.unindex(items)
+    return Array.from(this.unindex(items))
   }
 
   unshift(...items) {
+    if (!items.length) return super.push()
+
     items = Reflect.apply(this.index, this, items)
-    Reflect.apply(super.unshift, this, Array.isArray(items) && items.length ? items : [items])
+
+    return Reflect.apply(super.unshift, this, Array.isArray(items) && items.length ? items : [items])
   }
 
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -144,14 +149,7 @@ class ObjectifiedArray extends Array {
     return item
   }
 
-  unindex(...items) {
-    const item = items[0]
-
-    // unroll for multiple items
-    if (Array.isArray(items) && items.length > 1) {
-      return items.map(i => this.unindex(i))
-    }
-
+  unindex(item) {
     // maps
     for (const path in this.$.by) {
       const key = this.$.by[path](item)
@@ -160,7 +158,6 @@ class ObjectifiedArray extends Array {
 
     // groups
     for (const [path, fn] of Object.entries(this.$.groups)) {
-      // console.log({ fn, item, path })
       if (fn(item)) {
         this.groups[path] = this.groups[path].filter(i => i !== item)
       }

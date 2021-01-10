@@ -136,19 +136,6 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
     })
 
     describe('groups:object --> automatically creates groups based on filter functions', () => {
-      // it(`groups:string --> map of group-definitions, e.g. { groups: 'age' }`, () => {
-      //   const a = new ObjectifiedArray({
-      //     groups: `age`,
-      //     items: [
-      //       { age: 4, name: 'Paul' },
-      //       { age: 4, name: 'Mary' },
-      //       { age: 6, name: 'Jones' },
-      //     ]
-      //   })
-
-      //   expect(typeof a.groups.age[4].length).toBe(2)
-      //   expect(typeof a.groups.age[6].length).toBe(1)
-      // })
       it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
         const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
 
@@ -168,6 +155,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           expect(a.length).toBe(2)
           expect(b).toBe(6)
         })
+
+        it('same return signature', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = Array(...NUMBERS)
+
+          expect(a.pop()).toBe(b.pop())
+          expect(a.pop(5)).toBe(b.pop(5))
+        })
       })
 
       describe('.push(item1, item2, ...)', () => {
@@ -176,6 +171,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           a.push(6)
 
           expect(a.length).toBe(1)
+        })
+
+        it('same return signature', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = Array(...NUMBERS)
+
+          expect(a.push()).toBe(b.push())
+          expect(a.push(5)).toBe(b.push(5))
         })
       })
 
@@ -186,6 +189,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
 
           expect(a.length).toBe(2)
           expect(b).toBe(1)
+        })
+
+        it('same return signature', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = Array(...NUMBERS)
+
+          expect(a.shift()).toBe(b.shift())
+          expect(a.shift(5)).toBe(b.shift(5))
         })
       })
 
@@ -207,6 +218,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           expect(b.length).toEqual(1)
           expect(a.by.triple[6]).toBe(undefined)
         })
+
+        it('same return signature', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = Array(...NUMBERS)
+
+          expect(a.splice()).toEqual(b.splice())
+          expect(a.splice(1,2)).toEqual(b.splice(1,2))
+        })
       })
 
       describe('.unshift(item1, item2, ...)', () => {
@@ -215,6 +234,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           a.unshift(9)
           expect(a.length).toBe(4)
           expect(Array.from(a)).toEqual([9, 1, 2, 6])
+        })
+
+        it('same return signature', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+          const b = Array(...NUMBERS)
+
+          expect(a.unshift()).toBe(b.unshift())
+          expect(a.unshift(1,2)).toEqual(b.unshift(1,2))
         })
       })
     })
@@ -228,6 +255,18 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
 
           expect(Array.from(a)).toEqual([1, 2, 6, 7, 8])
         })
+
+        it('returns added item (single)', () => {
+          const a = new ObjectifiedArray()
+
+          expect(a.add(4)).toEqual(4)
+        })
+
+        it('returns array of added items (multiple)', () => {
+          const a = new ObjectifiedArray()
+
+          expect(a.add(4, 6)).toEqual([4, 6])
+        })
       })
 
       describe('.remove(item1, item2, ...)', () => {
@@ -239,6 +278,12 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           const removed = a.remove(1, 6)
           expect(a.length).toBe(0)
           expect(removed).toEqual([1, 6])
+        })
+
+        it('removes multiple item(s)', () => {
+          const a = new ObjectifiedArray({ items: [1, 1, 1, 5, 6] })
+          a.remove(1)
+          expect(Array.from(a)).toEqual([5, 6])
         })
 
         it('works with by/groups and with classes (advanced)', () => {
@@ -261,6 +306,18 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           expect(cats.by.name.Fluffy).toBe(undefined)
           expect(removed).toBe(Fluffy)
           expect(cats.groups.startsWithF.includes(Fluffy)).toBe(false)
+        })
+
+        it('returns removed item (single)', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+
+          expect(a.remove(2)).toEqual(2)
+        })
+
+        it('returns array of removed items (multiple)', () => {
+          const a = new ObjectifiedArray({ items: NUMBERS })
+
+          expect(a.remove(1, 6)).toEqual([1, 6])
         })
       })
     })

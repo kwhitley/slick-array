@@ -6,14 +6,47 @@
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 
-Native JavaScript Array, but extended with custom indexing and group support.
+Native JavaScript Array, but extended with custom indexing and group support... or "treated like an object". #badjoke #forgiveme #terrible #notfunny #brokensenseofhumor
 
-Indexes and groups are added per-item at time of insert/delete (via native Array functions), thus are low cost, even for huge arrays, and essentially zero-cost for lookups.  Since they are indexed by reference only, there is very little additional memory overhead.  As this simply extends a native Array, none of the built-in Array functionality is lost.
+# Why?
+Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds.
 
 ## Installation
-
 ```
 yarn add objectified-array
+```
+
+## Features
+
+- [x] **Nearly fully interchangeable with built-in Array** - (which it extends) with the one exception that in order to preserve indexes/groups, you need to use the functional modifiers of the array structure (e.g. `push()`, `pop()`, `shift()`, `unshift()`, `splice()`), rather than direct setting of elements (e.g. `items[1] = 'something'`)
+- [x] **Creates lookups upon entry/exit** - this is HIGHLY performant, with the only *tiny* overhead being done at time of entry, rather than on future lookups/gets.
+- [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups, where groups are created/injected into upon entry/exit as well (not as performant as "by" lookups).
+- [x] **Optionally cast items with a class/function** - can automatically cast new items to a defined class/function.
+- [x] **Low memory overhead** - all internal structures are by-reference, meaning very little memory overhead beyond your raw data.
+
+# Simple Example
+```js
+import { ObjectifiedArray } from 'objectified-array'
+
+// create an array
+const items = new ObjectifiedArray({ by: ['id', 'name'] })
+
+items.push(
+  { id: 1, name: 'foo' },
+  { id: 2, name: 'bar' },
+  { id: 6, name: 'baz' },
+)
+
+// normal array functionality
+items.filter(i => i.name === 'bar') // [{ id: 2, name: 'bar' }]
+items.map(i => i.name)              // ['foo', 'bar', 'baz']
+for (const item of items) {
+  console.log(item)                 // { id: 1, name: 'foo' }... { id: 2, name: 'bar' }...
+}
+
+// fancy new features
+items.by.id[2] // { id: 2, name: 'bar' }
+items.by.name.foo // { id: 1, name: 'foo' }
 ```
 
 # Advanced Example
@@ -30,14 +63,14 @@ class Kitten {
   }
 }
 
-// create a router
+// create an array
 const kittens = new ObjectifiedArray({
   as: Kitten,
   by: {
     id: item => item.id,
     name: item => item.name,
   },
-  that: {
+  groups: {
     startsWithF: item => item.name.match(/^f/i),
   },
   items: [
@@ -53,7 +86,7 @@ kittens.map(i => i.id) // [12,15,3] - still iterates like a typical array
 kittens[0].talk() // 'meow!'
 kittens.by.id[12] // Kitten { id: 12, name: 'Fluffy' }
 kittens.by.name.Mittens // Kitten { id: 15, name: 'Mittens' }
-kittens.that.startsWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
+kittens.groups.startsWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
 
 // indexes are modified on the fly, not just at instantiation
 kittens.push({ id: 2, name: 'Ringo' })
