@@ -49,7 +49,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         expect(items.length).toEqual(3)
         expect(Array.from(items)).toEqual([undefined, undefined, 7])
       })
-      it(`new ObjectifiedArray('abc', 'def') --> ['abc', 'def']`, () => {
+      it('new ObjectifiedArray(\'abc\', \'def\') --> [\'abc\', \'def\']', () => {
         const items = new ObjectifiedArray('abc', 'def')
         expect(items.length).toEqual(2)
         expect(Array.from(items)).toEqual(['abc', 'def'])
@@ -117,12 +117,12 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
     })
 
     describe('by:string|array[string]|object --> automatically indexes by these key(s)', () => {
-      it(`by:string --> { by: 'name' }`, () => {
+      it('by:string --> { by: \'name\' }', () => {
         const a = new ObjectifiedArray({ by: 'name' })
 
         expect(typeof a.$.by.name).toBe('function')
       })
-      it(`by:array[string] --> { by: ['id', 'name'] }`, () => {
+      it('by:array[string] --> { by: [\'id\', \'name\'] }', () => {
         const a = new ObjectifiedArray({ by: ['id', 'name'] })
 
         expect(typeof a.$.by.id).toBe('function')

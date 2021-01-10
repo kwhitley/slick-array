@@ -5,6 +5,7 @@ const unifyBy = by => {
   if (Array.isArray(by)) {
     return by.reduce((acc, key) => (acc[key] = i => i[key]) && acc, {})
   }
+
   return by
 }
 

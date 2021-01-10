@@ -182,7 +182,7 @@ module.exports = {
         'no-spaced-func': 'error',
         'no-sync': 'error',
         'no-tabs': 'error',
-        'no-template-curly-in-string': 'error',
+        'no-template-curly-in-string': 'off',
         'no-ternary': 'off',
         'no-throw-literal': 'error',
         'no-trailing-spaces': 'error',
