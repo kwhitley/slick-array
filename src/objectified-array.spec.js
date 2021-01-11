@@ -125,7 +125,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
       it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
         const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
 
-        expect(typeof a.groups.hasId).toBe('object')
+        expect(typeof a.hasId).toBe('object')
         expect(typeof a.$.groups.hasId).toBe('function')
       })
     })
@@ -282,18 +282,18 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
               name: c => c.name,
             },
             groups: {
-              startsWithF: i => i.name.match(/^f/i)
+              startsWithF: i => !!i.name.match(/^f/i)
             }
           })
           const Fluffy = cats.find(c => c.name === 'Fluffy')
           expect(cats.by.name.Fluffy).toBe(Fluffy)
-          expect(cats.groups.startsWithF.includes(Fluffy)).toBe(true)
+          expect(cats.startsWithF.includes(Fluffy)).toBe(true)
 
           const removed = cats.remove(Fluffy)
           expect(cats.length).toBe(2)
           expect(cats.by.name.Fluffy).toBe(undefined)
           expect(removed).toBe(Fluffy)
-          expect(cats.groups.startsWithF.includes(Fluffy)).toBe(false)
+          expect(cats.startsWithF.includes(Fluffy)).toBe(false)
         })
 
         it('returns removed item (single)', () => {
@@ -324,7 +324,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         expect(a.by.id[6].name).toEqual('Kitty')
       })
 
-      it('.groups[key] --> returns array of matching items', () => {
+      it('.groups[key] --> returns array of matching items (when group definition returns Boolean', () => {
         const a = new ObjectifiedArray({
           items: CATS,
           as: Cat,
@@ -332,12 +332,51 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
             id: i => i.id,
           },
           groups: {
-            startsWithF: i => i.name.match(/^f/i)
+            startsWithF: i => !!i.name.match(/^f/i)
           }
         })
 
         expect(a.length).toEqual(3)
-        expect(a.groups.startsWithF.length).toBe(1)
+        expect(a.startsWithF.length).toBe(1)
+      })
+
+      it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
+        const a = new ObjectifiedArray({
+          items: CATS,
+          as: Cat,
+          by: {
+            id: i => i.id,
+          },
+          groups: {
+            startsWith: i => i.name[0],
+          }
+        })
+
+        expect(a.length).toEqual(3)
+        expect(a.startsWith.F.length).toBe(1)
+      })
+
+      it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
+        const a = new ObjectifiedArray({
+          items: [
+            { id: 1, name: 'foo' },
+            { id: 2, name: 'bar' },
+            { id: 3 },
+          ],
+          groups: {
+            has: i => i.name && 'name',
+          }
+        })
+
+        expect(a.length).toBe(3)
+        expect(a.has.name.length).toBe(2)
+
+        a.remove(a[0])
+        expect(a.length).toBe(2)
+
+        a.remove(a[0])
+        expect(a.length).toBe(1)
+        expect(a.has.name.length).toBe(0)
       })
     })
   })

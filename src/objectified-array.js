@@ -20,10 +20,10 @@ class ObjectifiedArray extends Array {
     }
 
     const {
-      by = {},
-      groups = {},
+      by,
+      groups,
       items = [],
-      as = undefined // optional constructor for new items
+      as, // optional constructor for new items
     } = config
 
     // prepend normal array stuff
@@ -38,17 +38,24 @@ class ObjectifiedArray extends Array {
     super()
 
     // public
-    this.by = {}
-    this.groups = {}
-    this.$ = {
-      by: unifyBy(by),
-      as,
-      groups,
+    this.$ = {}
+
+    if (by) {
+      this.$.by = unifyBy(by)
+      this.by = {}
     }
 
-    // initialize groups
-    for (const key in groups) {
-      this.groups[key] = []
+    if (as) {
+      this.$.as = as
+    }
+
+    if (groups) {
+      this.$.groups = groups
+      // this.groups = {}
+    }
+
+    for (var group in groups) {
+      this[group] = []
     }
 
     if (items.length) {
@@ -142,9 +149,16 @@ class ObjectifiedArray extends Array {
     }
 
     // groups
-    for (const [path, fn] of Object.entries(this.$.groups)) {
-      if (fn(item)) {
-        this.groups[path].push(item)
+    for (const [path, fn] of Object.entries(this.$.groups || {})) {
+      const key = fn(item)
+
+      if (key) {
+        if (Boolean(key) === key) { // dump into group
+          this[path].push(item)
+        } else {
+          const group = this[path][key] = this[path][key] || []
+          group.push(item)
+        }
       }
     }
 
@@ -159,9 +173,15 @@ class ObjectifiedArray extends Array {
     }
 
     // groups
-    for (const [path, fn] of Object.entries(this.$.groups)) {
-      if (fn(item)) {
-        this.groups[path] = this.groups[path].filter(i => i !== item)
+    for (const [path, fn] of Object.entries(this.$.groups || {})) {
+      const key = fn(item)
+
+      if (key) {
+        if (Boolean(key) === key) { // dump into group
+          this[path] = this[path].filter(i => i !== item)
+        } else {
+          this[path][key] = this[path][key].filter(i => i !== item)
+        }
       }
     }
 
