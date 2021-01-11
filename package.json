@@ -1,6 +1,6 @@
 {
   "name": "slick-array",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
   "main": "./dist/slick-array.min.js",
   "types": "./dist/slick-array.d.ts",

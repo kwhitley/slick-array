@@ -19,9 +19,9 @@ yarn add slick-array
 ## Features
 
 - [x] **Nearly fully interchangeable with built-in Array** - (which it extends) with the one exception that in order to preserve indexes/groups, you need to use the functional modifiers of the array structure (e.g. `push()`, `pop()`, `shift()`, `unshift()`, `splice()`), rather than direct setting of elements (e.g. `items[1] = 'something'`)
-- [x] **Creates lookups upon entry/exit** - this is HIGHLY performant, with the only *tiny* overhead being done at time of entry, rather than on future lookups/gets.
-- [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups, where groups are created/injected into upon entry/exit as well (not as performant as "by" lookups).
-- [x] **Optionally cast items with a class/function** - can automatically cast new items to a defined class/function.
+- [x] **Creates lookups upon entry/exit** - this is *much* faster than scanning for an item when needed.  All work is done up front upon entry/exit, leaving zero-cost index behind.  **CAVEAT: This is several times slower for large push operations than a native Array, so if you need performance and no lookups, please use Array instead!**
+- [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups (and subgroups), where groups are created/injected into upon entry/exit as well (at an additional cost).
+- [x] **Optionally cast items with a class/function** - SlickArray can automatically cast new items to a defined class/function.
 - [x] **Low memory overhead** - all internal structures are by-reference, meaning very little memory overhead beyond your raw data.
 - [x] **Small, with zero dependencies** - ~820 bytes gzipped.  We'll work to minimize this as much as possible, to justify using in minimalist projects.
 
@@ -81,7 +81,7 @@ const kittens = new SlickArray({
 // test some functionality
 kittens.length // 3
 kittens.map(i => i.id) // [12,15,3] - still iterates like a typical array
-kittens[0].talk() // 'meow!'
+kittens[0].talk() // 'meow!' --> this is an array of real Kitten classes
 kittens.by.id[12] // Kitten { id: 12, name: 'Fluffy' }
 kittens.by.name.Mittens // Kitten { id: 15, name: 'Mittens' }
 kittens.that.startWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
