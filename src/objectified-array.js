@@ -72,12 +72,10 @@ class ObjectifiedArray extends Array {
 
   remove(...items) {
     let index
-    if (items.length) {
-      for (const item of items) {
-        while ((index = this.indexOf(item)) !== -1) {
-          super.splice(index, 1)
-          this.unindex(item)
-        }
+    for (const item of items) {
+      while ((index = this.indexOf(item)) !== -1) {
+        super.splice(index, 1)
+        this.unindex(item)
       }
     }
 
@@ -132,8 +130,11 @@ class ObjectifiedArray extends Array {
 
   index(...items) {
     const as = this.$.as
+    const results = []
 
-    return items.map(item => {
+    for (const i in items) {
+      let item = items[i]
+
       if (as) {
         item = isClass(as) ? new as(item) : as(item)
       }
@@ -161,8 +162,10 @@ class ObjectifiedArray extends Array {
         }
       }
 
-      return item
-    })
+      results[i] = item
+    }
+
+    return results
   }
 
   unindex(item) {
@@ -178,9 +181,11 @@ class ObjectifiedArray extends Array {
 
       if (key) {
         if (Boolean(key) === key) { // dump into group
-          this[path] = this[path].filter(i => i !== item)
+          const index = this[path].indexOf(item)
+          this[path].splice(index, 1)
         } else {
-          this[path][key] = this[path][key].filter(i => i !== item)
+          const index = this[path][key].indexOf(item)
+          this[path][key].splice(index, 1)
         }
       }
     }
