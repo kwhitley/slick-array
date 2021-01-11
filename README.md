@@ -67,7 +67,7 @@ const kittens = new ObjectifiedArray({
     id: item => item.id,
     name: item => item.name,
   },
-  groups: {
+  that: {
     startWithF: item => item.name.match(/^f/i), // any non-string, truthy response groups in shallow group
     startWith: item => item.name[0], // if return is a String, use as key for subgroup
   },

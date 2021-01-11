@@ -21,7 +21,7 @@ class ObjectifiedArray extends Array {
 
     const {
       by,
-      groups,
+      that,
       items = [],
       as, // optional constructor for new items
     } = config
@@ -49,11 +49,11 @@ class ObjectifiedArray extends Array {
       this.$.as = isClass(as) ? i => new as(i) : as
     }
 
-    if (groups) {
+    if (that) {
       this.that = {}
-      this.$.groups = groups
+      this.$.that = that
 
-      for (const group in groups) {
+      for (const group in that) {
         this.that[group] = []
       }
     }
@@ -119,7 +119,7 @@ class ObjectifiedArray extends Array {
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
-    if (!this.$.by && !this.$.groups && !this.$.as) return items
+    if (!this.$.by && !this.$.that && !this.$.as) return items
 
     return items.map(item => {
       item = this.$.as ? this.$.as(item) : item
@@ -137,10 +137,10 @@ class ObjectifiedArray extends Array {
         }
       }
 
-       // groups
-      if (this.$.groups) {
-        for (const path in this.$.groups) {
-          const key = this.$.groups[path](item)
+       // that
+      if (this.$.that) {
+        for (const path in this.$.that) {
+          const key = this.$.that[path](item)
 
           if (!key) continue
 
@@ -165,9 +165,9 @@ class ObjectifiedArray extends Array {
       }
     }
 
-    // groups
-    if (this.$.groups) {
-      for (const [path, fn] of Object.entries(this.$.groups || {})) {
+    // that
+    if (this.$.that) {
+      for (const [path, fn] of Object.entries(this.$.that || {})) {
         const key = fn(item)
 
         if (key) {

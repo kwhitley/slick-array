@@ -121,12 +121,12 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
       })
     })
 
-    describe('groups:object --> automatically creates groups based on filter functions', () => {
-      it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
-        const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
+    describe('that:object --> automatically creates that based on filter functions', () => {
+      it('that:object --> map of group-definitions, e.g. { that: { hasId: i => !!i.id } }', () => {
+        const a = new ObjectifiedArray({ that: { hasId: i => Boolean(i.id) } })
 
         expect(typeof a.that.hasId).toBe('object')
-        expect(typeof a.$.groups.hasId).toBe('function')
+        expect(typeof a.$.that.hasId).toBe('function')
       })
     })
   })
@@ -195,7 +195,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
             by: {
               triple: i => i * 3,
             },
-            groups: {
+            that: {
               under4: i => i < 4,
             }
           })
@@ -274,14 +274,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           expect(Array.from(a)).toEqual([5, 6])
         })
 
-        it('works with by/groups and with classes (advanced)', () => {
+        it('works with by/that and with classes (advanced)', () => {
           const cats = new ObjectifiedArray({
             items: CATS,
             as: Cat,
             by: {
               name: c => c.name,
             },
-            groups: {
+            that: {
               startsWithF: i => Boolean(i.name.match(/^f/i))
             }
           })
@@ -324,14 +324,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         expect(a.by.id[6].name).toEqual('Kitty')
       })
 
-      it('.groups[key] --> returns array of matching items (when group definition returns Boolean', () => {
+      it('.that[key] --> returns array of matching items (when group definition returns Boolean', () => {
         const a = new ObjectifiedArray({
           items: CATS,
           as: Cat,
           by: {
             id: i => i.id,
           },
-          groups: {
+          that: {
             startsWithF: i => Boolean(i.name.match(/^f/i)),
           }
         })
@@ -340,14 +340,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         expect(a.that.startsWithF.length).toBe(1)
       })
 
-      it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
+      it('[key] --> returns object of that at key when group definition returns a non-boolean', () => {
         const a = new ObjectifiedArray({
           items: CATS,
           as: Cat,
           by: {
             id: i => i.id,
           },
-          groups: {
+          that: {
             startsWith: i => i.name[0],
           }
         })
@@ -356,14 +356,14 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         expect(a.that.startsWith.F.length).toBe(1)
       })
 
-      it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
+      it('[key] --> returns object of that at key when group definition returns a non-boolean', () => {
         const a = new ObjectifiedArray({
           items: [
             { id: 1, name: 'foo' },
             { id: 2, name: 'bar' },
             { id: 3 },
           ],
-          groups: {
+          that: {
             has: i => i.name && 'name',
           },
         })
