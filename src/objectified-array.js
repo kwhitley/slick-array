@@ -51,10 +51,9 @@ class ObjectifiedArray extends Array {
 
     if (groups) {
       this.$.groups = groups
-      // this.groups = {}
     }
 
-    for (var group in groups) {
+    for (const group in groups) {
       this[group] = []
     }
 
@@ -66,9 +65,7 @@ class ObjectifiedArray extends Array {
   // ADDED FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   add(...items) {
-    for (const i of items) {
-      this.push(i)
-    }
+    Reflect.apply(this.push, this, items)
 
     return items.length > 1 ? items : items[0]
   }
@@ -97,11 +94,18 @@ class ObjectifiedArray extends Array {
   }
 
   push(...items) {
-    if (!items.length) return super.push()
+    if (!items.length) return this.length
 
     items = Reflect.apply(this.index, this, items)
 
-    return Reflect.apply(super.push, this, Array.isArray(items) && items.length ? items : [items])
+    const itemsLength = items.length,
+          originalLength = this.length
+
+    for (let i=0; i<itemsLength; i++) {
+      this[originalLength+i] = items[i]
+    }
+
+    return this.length
   }
 
   shift() {
@@ -117,52 +121,48 @@ class ObjectifiedArray extends Array {
   }
 
   unshift(...items) {
-    if (!items.length) return super.unshift()
+    if (!items.length) return this.length
 
     items = Reflect.apply(this.index, this, items)
 
-    return Reflect.apply(super.unshift, this, Array.isArray(items) && items.length ? items : [items])
+    return Reflect.apply(super.unshift, this, items)
   }
 
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
     const as = this.$.as
-    let item = items[0]
 
-    if (Array.isArray(items) && items.length > 1) {
-      return items.map(i => this.index(i))
-    }
-
-    if (as) {
-      item = isClass(as) ? new as(...items) : as(...items)
-    }
-
-    // maps
-    for (const path in this.$.by) {
-      const key = this.$.by[path](item)
-      if (!this.by[path]) {
-        this.by[path] = {}
+    return items.map(item => {
+      if (as) {
+        item = isClass(as) ? new as(item) : as(item)
       }
 
-      this.by[path][key] = item
-    }
+      // maps
+      for (const path in this.$.by) {
+        const key = this.$.by[path](item)
+        if (!this.by[path]) {
+          this.by[path] = {}
+        }
 
-    // groups
-    for (const [path, fn] of Object.entries(this.$.groups || {})) {
-      const key = fn(item)
+        this.by[path][key] = item
+      }
 
-      if (key) {
-        if (Boolean(key) === key) { // dump into group
-          this[path].push(item)
-        } else {
-          const group = this[path][key] = this[path][key] || []
-          group.push(item)
+      // groups
+      for (const [path, fn] of Object.entries(this.$.groups || {})) {
+        const key = fn(item)
+
+        if (key) {
+          if (Boolean(key) === key) { // dump into group
+            this[path].push(item)
+          } else {
+            (this[path][key] = this[path][key] || []).push(item)
+          }
         }
       }
-    }
 
-    return item
+      return item
+    })
   }
 
   unindex(item) {

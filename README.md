@@ -23,7 +23,8 @@ yarn add objectified-array
 - [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups, where groups are created/injected into upon entry/exit as well (not as performant as "by" lookups).
 - [x] **Optionally cast items with a class/function** - can automatically cast new items to a defined class/function.
 - [x] **Low memory overhead** - all internal structures are by-reference, meaning very little memory overhead beyond your raw data.
-- [x] **Small, with zero dependencies** - ~740 bytes gzipped.  We'll work to minimize this as much as possible, to justify using in minimalist projects.
+- [x] **Incredibly fast** - We use faster-than-native internal methods when possible (e.g. push()), and all lookups are created at write time, so reads simply access existing properties.
+- [x] **Small, with zero dependencies** - ~780 bytes gzipped.  We'll work to minimize this as much as possible, to justify using in minimalist projects.
 
 # Simple Example
 ```js
@@ -39,11 +40,7 @@ items.push(
 )
 
 // normal array functionality
-items.filter(i => i.name === 'bar') // [{ id: 2, name: 'bar' }]
 items.map(i => i.name)              // ['foo', 'bar', 'baz']
-for (const item of items) {
-  console.log(item)                 // { id: 1, name: 'foo' }... { id: 2, name: 'bar' }...
-}
 
 // fancy new features
 items.by.id[2] // { id: 2, name: 'bar' }

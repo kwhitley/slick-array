@@ -282,7 +282,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
               name: c => c.name,
             },
             groups: {
-              startsWithF: i => !!i.name.match(/^f/i)
+              startsWithF: i => Boolean(i.name.match(/^f/i))
             }
           })
           const Fluffy = cats.find(c => c.name === 'Fluffy')
@@ -332,7 +332,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
             id: i => i.id,
           },
           groups: {
-            startsWithF: i => !!i.name.match(/^f/i)
+            startsWithF: i => Boolean(i.name.match(/^f/i)),
           }
         })
 
