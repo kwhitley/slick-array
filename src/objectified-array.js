@@ -67,9 +67,9 @@ class ObjectifiedArray extends Array {
   }
 
   remove(...items) {
+    let index
     if (items.length) {
       for (const item of items) {
-        let index
         while ((index = this.indexOf(item)) !== -1) {
           super.splice(index, 1)
           this.unindex(item)
@@ -110,7 +110,7 @@ class ObjectifiedArray extends Array {
   }
 
   unshift(...items) {
-    if (!items.length) return super.push()
+    if (!items.length) return super.unshift()
 
     items = Reflect.apply(this.index, this, items)
 
@@ -123,10 +123,12 @@ class ObjectifiedArray extends Array {
     const as = this.$.as
     let item = items[0]
 
+    if (Array.isArray(items) && items.length > 1) {
+      return items.map(i => this.index(i))
+    }
+
     if (as) {
       item = isClass(as) ? new as(...items) : as(...items)
-    } else if (Array.isArray(items) && items.length > 1) {
-      return items.map(i => this.index(i))
     }
 
     // maps

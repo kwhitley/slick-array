@@ -10,13 +10,6 @@ const CATS = [
 
 class ExtendedNumber extends Number {}
 
-class AdvancedConstructor {
-  constructor(a, b) {
-    this.a = a
-    this.b = b
-  }
-}
-
 class Cat {
   constructor(config = {}) {
     Object.assign(this, config)
@@ -88,8 +81,8 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
 
         a.unshift(9, 10) // 10 is ignored, as it's passed with 9 to a single constructor
         expect(Number(a[0])).toBe(9)
-        expect(Number(a[1])).toBe(8)
-        expect(a.length).toBe(5)
+        expect(Number(a[1])).toBe(10)
+        expect(a.length).toBe(6)
       })
 
       it('casts items with function, when passed a function (e.g. { as: v => `${v}` })', () => {
@@ -106,13 +99,6 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           as: String,
         })
         expect(Array.from(a)).toEqual(['1', '2', '6'])
-      })
-
-      it('can use multi-param class constructors, e.g. constructor(a,b) - EXPERIMENTAL', () => {
-        const a = new ObjectifiedArray({ as: AdvancedConstructor })
-        a.push('foo', 'bar')
-        expect(a[0]).toEqual({ a: 'foo', b: 'bar' })
-        expect(a.length).toBe(1)
       })
     })
 
@@ -167,10 +153,12 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
 
       describe('.push(item1, item2, ...)', () => {
         it('adds item(s) to end', () => {
-          const a = new ObjectifiedArray()
+          const a = new ObjectifiedArray({ as: ExtendedNumber })
           a.push(6)
-
           expect(a.length).toBe(1)
+
+          a.push(1, 2)
+          expect(a.length).toBe(3)
         })
 
         it('same return signature', () => {
@@ -224,7 +212,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           const b = Array(...NUMBERS)
 
           expect(a.splice()).toEqual(b.splice())
-          expect(a.splice(1,2)).toEqual(b.splice(1,2))
+          expect(a.splice(1, 2)).toEqual(b.splice(1, 2))
         })
       })
 
@@ -241,7 +229,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           const b = Array(...NUMBERS)
 
           expect(a.unshift()).toBe(b.unshift())
-          expect(a.unshift(1,2)).toEqual(b.unshift(1,2))
+          expect(a.unshift(1, 2)).toEqual(b.unshift(1, 2))
         })
       })
     })
