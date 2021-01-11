@@ -1,4 +1,4 @@
-# objectified-array
+# SlickArray
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
@@ -6,14 +6,14 @@
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 
-Native JavaScript Array, but extended with custom indexing and group support... or "treated like an object". #badjoke #forgiveme #terrible #notfunny #brokensenseofhumor
+Native JavaScript Array, but extended with custom indexing and group support for super-fast lookups.
 
 # Why?
 Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds.
 
 ## Installation
 ```
-yarn add objectified-array
+yarn add slick-array
 ```
 
 ## Features
@@ -27,10 +27,10 @@ yarn add objectified-array
 
 # Simple Example
 ```js
-import { ObjectifiedArray } from 'objectified-array'
+import { SlickArray } from 'slick-array'
 
 // create an array
-const items = new ObjectifiedArray({ by: ['id', 'name'] })
+const items = new SlickArray({ by: ['id', 'name'] })
 
 items.push(
   { id: 1, name: 'foo' },
@@ -48,7 +48,7 @@ items.by.name.foo // { id: 1, name: 'foo' }
 
 # Advanced Example
 ```js
-import { ObjectifiedArray } from 'objectified-array'
+import { SlickArray } from 'slick-array'
 
 class Kitten {
   constructor(config = {}) {
@@ -61,7 +61,7 @@ class Kitten {
 }
 
 // create an array
-const kittens = new ObjectifiedArray({
+const kittens = new SlickArray({
   as: Kitten,
   by: {
     id: item => item.id,
@@ -106,16 +106,16 @@ kittens.by.name.Ringo // Kitten { id: 2, name: 'Ringo' }
 # Contributors
 The real heroes (those that help me maintain this) will be attributed below!
 
-[twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fobjectified-array
-[gzip-image]:https://img.shields.io/bundlephobia/minzip/objectified-array
-[gzip-url]:https://bundlephobia.com/result?p=objectified-array
-[issues-image]:https://img.shields.io/github/issues/kwhitley/objectified-array
-[issues-url]:https://github.com/kwhitley/objectified-array/issues
-[npm-image]:https://img.shields.io/npm/v/objectified-array.svg
-[npm-url]:http://npmjs.org/package/objectified-array
-[travis-image]:https://travis-ci.org/kwhitley/objectified-array.svg?branch=v1.x
-[travis-url]:https://travis-ci.org/kwhitley/objectified-array
-[david-image]:https://david-dm.org/kwhitley/objectified-array/status.svg
-[david-url]:https://david-dm.org/kwhitley/objectified-array
-[coveralls-image]:https://coveralls.io/repos/github/kwhitley/objectified-array/badge.svg?branch=v1.x
-[coveralls-url]:https://coveralls.io/github/kwhitley/objectified-array?branch=v1.x
+[twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fslick-array
+[gzip-image]:https://img.shields.io/bundlephobia/minzip/slick-array
+[gzip-url]:https://bundlephobia.com/result?p=slick-array
+[issues-image]:https://img.shields.io/github/issues/kwhitley/slick-array
+[issues-url]:https://github.com/kwhitley/slick-array/issues
+[npm-image]:https://img.shields.io/npm/v/slick-array.svg
+[npm-url]:http://npmjs.org/package/slick-array
+[travis-image]:https://travis-ci.org/kwhitley/slick-array.svg?branch=v1.x
+[travis-url]:https://travis-ci.org/kwhitley/slick-array
+[david-image]:https://david-dm.org/kwhitley/slick-array/status.svg
+[david-url]:https://david-dm.org/kwhitley/slick-array
+[coveralls-image]:https://coveralls.io/repos/github/kwhitley/slick-array/badge.svg?branch=v1.x
+[coveralls-url]:https://coveralls.io/github/kwhitley/slick-array?branch=v1.x

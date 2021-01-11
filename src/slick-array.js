@@ -2,14 +2,12 @@ const isClass = v => typeof v === 'function' && v.toString().match(/^\s*class\s+
 
 const unifyBy = by => {
   if (typeof by === 'string') return { [by]: i => i[by] }
-  if (Array.isArray(by)) {
-    return by.reduce((acc, key) => (acc[key] = i => i[key]) && acc, {})
-  }
+  if (Array.isArray(by)) return by.reduce((acc, key) => (acc[key] = i => i[key]) && acc, {})
 
   return by
 }
 
-class ObjectifiedArray extends Array {
+class SlickArray extends Array {
   constructor(...args) {
     let config = args.pop()
     if (typeof config !== 'object' || Array.isArray(config)) {
@@ -120,9 +118,15 @@ class ObjectifiedArray extends Array {
 
   index(...items) {
     if (!this.$.by && !this.$.that && !this.$.as) return items
+    // if (!(this.$.by || this.$.that || this.$.as)) return items
 
-    return items.map(item => {
-      item = this.$.as ? this.$.as(item) : item
+    const max = items.length
+
+    for (let i=max-1; i>=0; i--) {
+      if (this.$.as) {
+        items[i] = this.$.as(items[i])
+      }
+      const item = items[i]
 
       // maps
       if (this.$.by) {
@@ -151,9 +155,9 @@ class ObjectifiedArray extends Array {
           }
         }
       }
+    }
 
-      return item
-    })
+    return items
   }
 
   unindex(item) {
@@ -186,4 +190,4 @@ class ObjectifiedArray extends Array {
   }
 }
 
-module.exports = { ObjectifiedArray }
+module.exports = { SlickArray }

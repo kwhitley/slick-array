@@ -1,13 +1,13 @@
 {
-  "name": "objectified-array",
+  "name": "slick-array",
   "version": "1.0.0",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
-  "main": "./dist/objectified-array.min.js",
-  "types": "./dist/objectified-array.d.ts",
+  "main": "./dist/slick-array.min.js",
+  "types": "./dist/slick-array.d.ts",
   "files": [
-    "dist/objectified-array.js",
-    "dist/objectified-array.min.js",
-    "dist/objectified-array.d.ts"
+    "dist/slick-array.js",
+    "dist/slick-array.min.js",
+    "dist/slick-array.d.ts"
   ],
   "keywords": [
     "array",
@@ -26,20 +26,20 @@
     "dev": "yarn test - --watch",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "yarn verify",
-    "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/objectified-array.d.ts dist",
-    "build": "terser -c -m toplevel -- dist/objectified-array.js  > dist/objectified-array.min.js",
+    "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/slick-array.d.ts dist",
+    "build": "terser -c -m toplevel -- dist/slick-array.js  > dist/slick-array.min.js",
     "release": "release --tag --push"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kwhitley/objectified-array.git"
+    "url": "git+https://github.com/kwhitley/slick-array.git"
   },
   "author": "Kevin R. Whitley <krwhitley@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kwhitley/objectified-array/issues"
+    "url": "https://github.com/kwhitley/slick-array/issues"
   },
-  "homepage": "https://github.com/kwhitley/objectified-array#readme",
+  "homepage": "https://github.com/kwhitley/slick-array#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
     "coveralls": "^3.0.13",
