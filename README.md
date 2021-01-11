@@ -1,4 +1,4 @@
-![Logo][logo-image]
+# objectified-array
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
@@ -107,7 +107,6 @@ kittens.by.name.Ringo // Kitten { id: 2, name: 'Ringo' }
 The real heroes (those that help me maintain this) will be attributed below!
 
 [twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fobjectified-array
-[logo-image]:https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png
 [gzip-image]:https://img.shields.io/bundlephobia/minzip/objectified-array
 [gzip-url]:https://bundlephobia.com/result?p=objectified-array
 [issues-image]:https://img.shields.io/github/issues/kwhitley/objectified-array
