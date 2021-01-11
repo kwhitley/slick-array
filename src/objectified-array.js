@@ -50,11 +50,12 @@ class ObjectifiedArray extends Array {
     }
 
     if (groups) {
+      this.that = {}
       this.$.groups = groups
-    }
 
-    for (const group in groups) {
-      this[group] = []
+      for (const group in groups) {
+        this.that[group] = []
+      }
     }
 
     if (items.length) {
@@ -118,8 +119,6 @@ class ObjectifiedArray extends Array {
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
-    const as = this.$.as
-
     if (!this.$.by && !this.$.groups && !this.$.as) return items
 
     return items.map(item => {
@@ -129,6 +128,7 @@ class ObjectifiedArray extends Array {
       if (this.$.by) {
         for (const path in this.$.by) {
           const key = this.$.by[path](item)
+
           if (!this.by[path]) {
             this.by[path] = {}
           }
@@ -142,12 +142,12 @@ class ObjectifiedArray extends Array {
         for (const path in this.$.groups) {
           const key = this.$.groups[path](item)
 
-          if (key) {
-            if (key === true || key === false) { // dump into group
-              this[path].push(item)
-            } else {
-              (this[path][key] = this[path][key] || []).push(item)
-            }
+          if (!key) continue
+
+          if (typeof key === 'string') {
+            (this.that[path][key] = this.that[path][key] || []).push(item)
+          } else {
+            this.that[path].push(item)
           }
         }
       }
@@ -158,22 +158,26 @@ class ObjectifiedArray extends Array {
 
   unindex(item) {
     // maps
-    for (const path in this.$.by) {
-      const key = this.$.by[path](item)
-      Reflect.deleteProperty(this.by[path], key)
+    if (this.$.by) {
+      for (const path in this.$.by) {
+        const key = this.$.by[path](item)
+        Reflect.deleteProperty(this.by[path], key)
+      }
     }
 
     // groups
-    for (const [path, fn] of Object.entries(this.$.groups || {})) {
-      const key = fn(item)
+    if (this.$.groups) {
+      for (const [path, fn] of Object.entries(this.$.groups || {})) {
+        const key = fn(item)
 
-      if (key) {
-        if (Boolean(key) === key) { // dump into group
-          const index = this[path].indexOf(item)
-          this[path].splice(index, 1)
-        } else {
-          const index = this[path][key].indexOf(item)
-          this[path][key].splice(index, 1)
+        if (key) {
+          if (typeof key === 'string') { // dump into group
+            const index = this.that[path][key].indexOf(item)
+            this.that[path][key].splice(index, 1)
+          } else {
+            const index = this.that[path].indexOf(item)
+            this.that[path].splice(index, 1)
+          }
         }
       }
     }

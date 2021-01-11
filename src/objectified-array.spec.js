@@ -125,7 +125,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
       it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
         const a = new ObjectifiedArray({ groups: { hasId: i => Boolean(i.id) } })
 
-        expect(typeof a.hasId).toBe('object')
+        expect(typeof a.that.hasId).toBe('object')
         expect(typeof a.$.groups.hasId).toBe('function')
       })
     })
@@ -287,13 +287,13 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           })
           const Fluffy = cats.find(c => c.name === 'Fluffy')
           expect(cats.by.name.Fluffy).toBe(Fluffy)
-          expect(cats.startsWithF.includes(Fluffy)).toBe(true)
+          expect(cats.that.startsWithF.includes(Fluffy)).toBe(true)
 
           const removed = cats.remove(Fluffy)
           expect(cats.length).toBe(2)
           expect(cats.by.name.Fluffy).toBe(undefined)
           expect(removed).toBe(Fluffy)
-          expect(cats.startsWithF.includes(Fluffy)).toBe(false)
+          expect(cats.that.startsWithF.includes(Fluffy)).toBe(false)
         })
 
         it('returns removed item (single)', () => {
@@ -337,7 +337,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         })
 
         expect(a.length).toEqual(3)
-        expect(a.startsWithF.length).toBe(1)
+        expect(a.that.startsWithF.length).toBe(1)
       })
 
       it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
@@ -353,7 +353,7 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
         })
 
         expect(a.length).toEqual(3)
-        expect(a.startsWith.F.length).toBe(1)
+        expect(a.that.startsWith.F.length).toBe(1)
       })
 
       it('[key] --> returns object of groups at key when group definition returns a non-boolean', () => {
@@ -365,18 +365,18 @@ describe('Class: ObjectifiedArray(...args, config?:object)', () => {
           ],
           groups: {
             has: i => i.name && 'name',
-          }
+          },
         })
 
         expect(a.length).toBe(3)
-        expect(a.has.name.length).toBe(2)
+        expect(a.that.has.name.length).toBe(2)
 
         a.remove(a[0])
         expect(a.length).toBe(2)
 
         a.remove(a[0])
         expect(a.length).toBe(1)
-        expect(a.has.name.length).toBe(0)
+        expect(a.that.has.name.length).toBe(0)
       })
     })
   })
