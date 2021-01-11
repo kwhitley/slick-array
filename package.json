@@ -20,6 +20,7 @@
     "native"
   ],
   "scripts": {
+    "benchmark": "node benchmark.js",
     "test": "npx eslint src && jest --verbose --coverage",
     "verify": "echo 'verifying module...' && yarn build && yarn test",
     "dev": "yarn test - --watch",
@@ -40,6 +41,7 @@
   },
   "homepage": "https://github.com/kwhitley/objectified-array#readme",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "coveralls": "^3.0.13",
     "eslint": "^7.2.0",
     "eslint-plugin-jest": "^23.13.2",

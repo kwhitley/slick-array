@@ -46,7 +46,7 @@ class ObjectifiedArray extends Array {
     }
 
     if (as) {
-      this.$.as = as
+      this.$.as = isClass(as) ? i => new as(i) : as
     }
 
     if (groups) {
@@ -92,18 +92,9 @@ class ObjectifiedArray extends Array {
   }
 
   push(...items) {
-    if (!items.length) return this.length
-
     items = Reflect.apply(this.index, this, items)
 
-    const itemsLength = items.length,
-          originalLength = this.length
-
-    for (let i=0; i<itemsLength; i++) {
-      this[originalLength+i] = items[i]
-    }
-
-    return this.length
+    return super.push(...items)
   }
 
   shift() {
@@ -119,53 +110,50 @@ class ObjectifiedArray extends Array {
   }
 
   unshift(...items) {
-    if (!items.length) return this.length
-
     items = Reflect.apply(this.index, this, items)
 
-    return Reflect.apply(super.unshift, this, items)
+    return super.unshift(...items)
   }
 
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
     const as = this.$.as
-    const results = []
 
-    for (const i in items) {
-      let item = items[i]
+    if (!this.$.by && !this.$.groups && !this.$.as) return items
 
-      if (as) {
-        item = isClass(as) ? new as(item) : as(item)
-      }
+    return items.map(item => {
+      item = this.$.as ? this.$.as(item) : item
 
       // maps
-      for (const path in this.$.by) {
-        const key = this.$.by[path](item)
-        if (!this.by[path]) {
-          this.by[path] = {}
-        }
+      if (this.$.by) {
+        for (const path in this.$.by) {
+          const key = this.$.by[path](item)
+          if (!this.by[path]) {
+            this.by[path] = {}
+          }
 
-        this.by[path][key] = item
+          this.by[path][key] = item
+        }
       }
 
-      // groups
-      for (const [path, fn] of Object.entries(this.$.groups || {})) {
-        const key = fn(item)
+       // groups
+      if (this.$.groups) {
+        for (const path in this.$.groups) {
+          const key = this.$.groups[path](item)
 
-        if (key) {
-          if (Boolean(key) === key) { // dump into group
-            this[path].push(item)
-          } else {
-            (this[path][key] = this[path][key] || []).push(item)
+          if (key) {
+            if (key === true || key === false) { // dump into group
+              this[path].push(item)
+            } else {
+              (this[path][key] = this[path][key] || []).push(item)
+            }
           }
         }
       }
 
-      results[i] = item
-    }
-
-    return results
+      return item
+    })
   }
 
   unindex(item) {

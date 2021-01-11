@@ -23,7 +23,6 @@ yarn add objectified-array
 - [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups, where groups are created/injected into upon entry/exit as well (not as performant as "by" lookups).
 - [x] **Optionally cast items with a class/function** - can automatically cast new items to a defined class/function.
 - [x] **Low memory overhead** - all internal structures are by-reference, meaning very little memory overhead beyond your raw data.
-- [x] **Incredibly fast** - We use faster-than-native internal methods when possible (e.g. push()), and all lookups are created at write time, so reads simply access existing properties (TLDR; it's very fast).
 - [x] **Small, with zero dependencies** - ~820 bytes gzipped.  We'll work to minimize this as much as possible, to justify using in minimalist projects.
 
 # Simple Example
