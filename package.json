@@ -1,7 +1,7 @@
 {
   "name": "slick-array",
-  "version": "0.1.0",
-  "description": "Tiny, zero-dependency router with route param and query parsing.",
+  "version": "0.1.1",
+  "description": "Native JavaScript Array, but extended with custom indexing and group support for super-fast lookups.",
   "main": "./dist/slick-array.min.js",
   "types": "./dist/slick-array.d.ts",
   "files": [
@@ -10,6 +10,7 @@
     "dist/slick-array.d.ts"
   ],
   "keywords": [
+    "slick",
     "array",
     "object",
     "indexed",
