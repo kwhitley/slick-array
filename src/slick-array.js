@@ -41,6 +41,10 @@ class SlickArray extends Array {
     if (by) {
       this.$.by = unifyBy(by)
       this.by = {}
+
+      for (const group in this.$.by) {
+        this.by[group] = {}
+      }
     }
 
     if (as) {
@@ -132,11 +136,6 @@ class SlickArray extends Array {
       if (this.$.by) {
         for (const path in this.$.by) {
           const key = this.$.by[path](item)
-
-          if (!this.by[path]) {
-            this.by[path] = {}
-          }
-
           this.by[path][key] = item
         }
       }
