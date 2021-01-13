@@ -19,7 +19,7 @@ class SlickArray extends Array {
 
     const {
       by,
-      that,
+      groupBy,
       items = [],
       as, // optional constructor for new items
     } = config
@@ -37,10 +37,11 @@ class SlickArray extends Array {
 
     // public
     this.$ = {}
+    this.by = {}
 
     if (by) {
       this.$.by = unifyBy(by)
-      this.by = {}
+      // this.by = {}
 
       for (const group in this.$.by) {
         this.by[group] = {}
@@ -51,12 +52,12 @@ class SlickArray extends Array {
       this.$.as = isClass(as) ? i => new as(i) : as
     }
 
-    if (that) {
-      this.that = {}
-      this.$.that = that
+    if (groupBy) {
+      this.$.groupBy = unifyBy(groupBy)
+      // this.by = this.by || {}
 
-      for (const group in that) {
-        this.that[group] = []
+      for (const group in this.$.groupBy) {
+        this.by[group] = []
       }
     }
 
@@ -121,8 +122,8 @@ class SlickArray extends Array {
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
-    if (!this.$.by && !this.$.that && !this.$.as) return items
-    // if (!(this.$.by || this.$.that || this.$.as)) return items
+    if (!this.$.by && !this.$.groupBy && !this.$.as) return items
+    // if (!(this.$.by || this.$.groupBy || this.$.as)) return items
 
     const max = items.length
 
@@ -140,17 +141,17 @@ class SlickArray extends Array {
         }
       }
 
-       // that
-      if (this.$.that) {
-        for (const path in this.$.that) {
-          const key = this.$.that[path](item)
+       // groupBy
+      if (this.$.groupBy) {
+        for (const path in this.$.groupBy) {
+          const key = this.$.groupBy[path](item)
 
           if (!key) continue
 
           if (typeof key === 'string') {
-            (this.that[path][key] = this.that[path][key] || []).push(item)
+            (this.by[path][key] = this.by[path][key] || []).push(item)
           } else {
-            this.that[path].push(item)
+            this.by[path].push(item)
           }
         }
       }
@@ -168,18 +169,18 @@ class SlickArray extends Array {
       }
     }
 
-    // that
-    if (this.$.that) {
-      for (const [path, fn] of Object.entries(this.$.that || {})) {
+    // groupBy
+    if (this.$.groupBy) {
+      for (const [path, fn] of Object.entries(this.$.groupBy || {})) {
         const key = fn(item)
 
         if (key) {
           if (typeof key === 'string') { // dump into group
-            const index = this.that[path][key].indexOf(item)
-            this.that[path][key].splice(index, 1)
+            const index = this.by[path][key].indexOf(item)
+            this.by[path][key].splice(index, 1)
           } else {
-            const index = this.that[path].indexOf(item)
-            this.that[path].splice(index, 1)
+            const index = this.by[path].indexOf(item)
+            this.by[path].splice(index, 1)
           }
         }
       }
