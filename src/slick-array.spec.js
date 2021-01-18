@@ -123,12 +123,12 @@ describe('Class: SlickArray(...args, config?:object)', () => {
     //   })
     // })
 
-    describe('groupBy:object --> automatically creates that based on filter functions', () => {
-      it('groupBy:object --> map of group-definitions, e.g. { groupBy: { hasId: i => !!i.id } }', () => {
-        const a = new SlickArray({ groupBy: { hasId: i => Boolean(i.id) } })
+    describe('that:object --> automatically creates that based on filter functions', () => {
+      it('that:object --> map of group-definitions, e.g. { that: { hasId: i => !!i.id } }', () => {
+        const a = new SlickArray({ that: { hasId: i => Boolean(i.id) } })
 
-        expect(typeof a.by.hasId).toBe('object')
-        expect(typeof a.$.groupBy.hasId).toBe('function')
+        expect(typeof a.that.hasId).toBe('object')
+        expect(typeof a.$.that.hasId).toBe('function')
       })
     })
   })
@@ -197,7 +197,7 @@ describe('Class: SlickArray(...args, config?:object)', () => {
             by: {
               triple: i => i * 3,
             },
-            groupBy: {
+            that: {
               under4: i => i < 4,
             }
           })
@@ -283,19 +283,19 @@ describe('Class: SlickArray(...args, config?:object)', () => {
             by: {
               name: c => c.name,
             },
-            groupBy: {
+            that: {
               startsWithF: i => Boolean(i.name.match(/^f/i))
             }
           })
           const Fluffy = cats.find(c => c.name === 'Fluffy')
           expect(cats.by.name.Fluffy).toBe(Fluffy)
-          expect(cats.by.startsWithF.includes(Fluffy)).toBe(true)
+          expect(cats.that.startsWithF.includes(Fluffy)).toBe(true)
 
           const removed = cats.remove(Fluffy)
           expect(cats.length).toBe(2)
           expect(cats.by.name.Fluffy).toBe(undefined)
           expect(removed).toBe(Fluffy)
-          expect(cats.by.startsWithF.includes(Fluffy)).toBe(false)
+          expect(cats.that.startsWithF.includes(Fluffy)).toBe(false)
         })
 
         it('returns removed item (single)', () => {
@@ -326,20 +326,20 @@ describe('Class: SlickArray(...args, config?:object)', () => {
         expect(a.by.id[6].name).toEqual('Kitty')
       })
 
-      it('.by[key] --> returns array of matching items (when group definition returns Boolean', () => {
+      it('.that[key] --> returns array of matching items (when group definition returns Boolean', () => {
         const a = new SlickArray({
           items: CATS,
           as: Cat,
           by: {
             id: i => i.id,
           },
-          groupBy: {
+          that: {
             startsWithF: i => Boolean(i.name.match(/^f/i)),
           }
         })
 
         expect(a.length).toEqual(3)
-        expect(a.by.startsWithF.length).toBe(1)
+        expect(a.that.startsWithF.length).toBe(1)
       })
 
       it('[key] --> returns object of that at key when group definition returns a non-boolean', () => {
@@ -349,13 +349,13 @@ describe('Class: SlickArray(...args, config?:object)', () => {
           by: {
             id: i => i.id,
           },
-          groupBy: {
+          that: {
             startsWith: i => i.name[0],
           }
         })
 
         expect(a.length).toEqual(3)
-        expect(a.by.startsWith.F.length).toBe(1)
+        expect(a.that.startsWith.F.length).toBe(1)
       })
 
       it('[key] --> returns object of that at key when group definition returns a non-boolean', () => {
@@ -365,20 +365,20 @@ describe('Class: SlickArray(...args, config?:object)', () => {
             { id: 2, name: 'bar' },
             { id: 3 },
           ],
-          groupBy: {
+          that: {
             has: i => i.name && 'name',
           },
         })
 
         expect(a.length).toBe(3)
-        expect(a.by.has.name.length).toBe(2)
+        expect(a.that.has.name.length).toBe(2)
 
         a.remove(a[0])
         expect(a.length).toBe(2)
 
         a.remove(a[0])
         expect(a.length).toBe(1)
-        expect(a.by.has.name.length).toBe(0)
+        expect(a.that.has.name.length).toBe(0)
       })
     })
   })

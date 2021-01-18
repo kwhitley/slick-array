@@ -11,6 +11,9 @@ Native JavaScript Array, but extended with custom indexing and group support for
 # Why?
 Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds.
 
+# Disclaimer
+**Over the next few days, I'll be finalizing the API (especially around groups) and output structure.  This may change substantially before finalizing as a 1.x release.  During this period, all feedback/suggestions are welcome via [issues](https://github.com/kwhitley/slick-array/issues)! **
+
 ## Installation
 ```
 yarn add slick-array
