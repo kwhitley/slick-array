@@ -116,9 +116,9 @@ The real heroes (those that help me maintain this) will be attributed below!
 [issues-url]:https://github.com/kwhitley/slick-array/issues
 [npm-image]:https://img.shields.io/npm/v/slick-array.svg
 [npm-url]:http://npmjs.org/package/slick-array
-[travis-image]:https://travis-ci.org/kwhitley/slick-array.svg?branch=v1.x
+[travis-image]:https://travis-ci.org/kwhitley/slick-array.svg?branch=master
 [travis-url]:https://travis-ci.org/kwhitley/slick-array
 [david-image]:https://david-dm.org/kwhitley/slick-array/status.svg
 [david-url]:https://david-dm.org/kwhitley/slick-array
-[coveralls-image]:https://coveralls.io/repos/github/kwhitley/slick-array/badge.svg?branch=v1.x
-[coveralls-url]:https://coveralls.io/github/kwhitley/slick-array?branch=v1.x
+[coveralls-image]:https://coveralls.io/repos/github/kwhitley/slick-array/badge.svg?branch=master
+[coveralls-url]:https://coveralls.io/github/kwhitley/slick-array?branch=master
