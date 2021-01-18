@@ -1,6 +1,6 @@
 {
   "name": "slick-array",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Native JavaScript Array, but extended with custom indexing and group support for super-fast lookups.",
   "main": "./dist/slick-array.min.js",
   "types": "./dist/slick-array.d.ts",
