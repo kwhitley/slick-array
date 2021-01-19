@@ -65,12 +65,12 @@ class Kitten {
 
 // create an array
 const kittens = new SlickArray({
-  as: Kitten,
+  as: Kitten, // cast items using this function/class
   by: {
     id: item => item.id,
     name: item => item.name,
   },
-  groupBy: {
+  that: {
     startWithF: item => item.name.match(/^f/i), // any non-string, truthy response groups in shallow group
     startWith: item => item.name[0], // if return is a String, use as key for subgroup
   },
@@ -81,20 +81,23 @@ const kittens = new SlickArray({
   ],
 })
 
-// test some functionality
+// yep, it's still an Array...
 kittens.length // 3
 kittens.map(i => i.id) // [12,15,3] - still iterates like a typical array
-kittens[0].talk() // 'meow!' --> this is an array of real Kitten classes
+
+// access individual items via "by"
 kittens.by.id[12] // Kitten { id: 12, name: 'Fluffy' }
 kittens.by.name.Mittens // Kitten { id: 15, name: 'Mittens' }
-kittens.by.startWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
-kittens.by.startWith.F // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
-kittens.by.startWith.M // [ Kitten { id: 15, name: 'Mittens' } ]
 
-// indexes are modified on the fly, not just at instantiation
+// or access groups via "that"
+kittens.that.startWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
+kittens.that.startWith.F // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
+kittens.that.startWith.M // [ Kitten { id: 15, name: 'Mittens' } ]
+
+// you can keep adding items, and indexes will be added automatically
 kittens.push({ id: 2, name: 'Ringo' })
 kittens.length // 4
-kittens.by.name.Ringo // Kitten { id: 2, name: 'Ringo' }
+kittens.by.name.Ringo.talk() // 'meow!' - it's a Kitten after all
 ```
 
 ## Testing & Contributing
