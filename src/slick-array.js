@@ -19,7 +19,7 @@ class SlickArray extends Array {
 
     const {
       by,
-      that,
+      groups,
       items = [],
       as, // optional constructor for new items
     } = config
@@ -51,12 +51,11 @@ class SlickArray extends Array {
       this.$.as = isClass(as) ? i => new as(i) : as
     }
 
-    if (that) {
-      this.that = {}
-      this.$.that = that
+    if (groups) {
+      this.$.groups = groups
 
-      for (const group in that) {
-        this.that[group] = []
+      for (const group in groups) {
+        this[group] = []
       }
     }
 
@@ -121,8 +120,8 @@ class SlickArray extends Array {
   // INTERNAL FUNCTIONS mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
   index(...items) {
-    if (!this.$.by && !this.$.that && !this.$.as) return items
-    // if (!(this.$.by || this.$.that || this.$.as)) return items
+    if (!this.$.by && !this.$.groups && !this.$.as) return items
+    // if (!(this.$.by || this.$.groups || this.$.as)) return items
 
     const max = items.length
 
@@ -140,17 +139,17 @@ class SlickArray extends Array {
         }
       }
 
-       // that
-      if (this.$.that) {
-        for (const path in this.$.that) {
-          const key = this.$.that[path](item)
+       // groups
+      if (this.$.groups) {
+        for (const path in this.$.groups) {
+          const key = this.$.groups[path](item)
 
           if (!key) continue
 
           if (typeof key === 'string') {
-            (this.that[path][key] = this.that[path][key] || []).push(item)
+            (this[path][key] = this[path][key] || []).push(item)
           } else {
-            this.that[path].push(item)
+            this[path].push(item)
           }
         }
       }
@@ -168,18 +167,18 @@ class SlickArray extends Array {
       }
     }
 
-    // that
-    if (this.$.that) {
-      for (const [path, fn] of Object.entries(this.$.that || {})) {
+    // groups
+    if (this.$.groups) {
+      for (const [path, fn] of Object.entries(this.$.groups || {})) {
         const key = fn(item)
 
         if (key) {
           if (typeof key === 'string') { // dump into group
-            const index = this.that[path][key].indexOf(item)
-            this.that[path][key].splice(index, 1)
+            const index = this[path][key].indexOf(item)
+            this[path][key].splice(index, 1)
           } else {
-            const index = this.that[path].indexOf(item)
-            this.that[path].splice(index, 1)
+            const index = this[path].indexOf(item)
+            this[path].splice(index, 1)
           }
         }
       }
@@ -190,3 +189,11 @@ class SlickArray extends Array {
 }
 
 module.exports = { SlickArray }
+
+
+/*
+
+items.by.type[] = []
+items.by.id[12] = {}
+
+*/
