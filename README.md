@@ -71,8 +71,8 @@ const kittens = new SlickArray({
     name: item => item.name,
   },
   groups: {
-    thatStartWithF: item => item.name.match(/^f/i), // any non-string, truthy response groups in shallow group
-    startingWith: item => item.name[0], // if return is a String, use as key for subgroup
+    thatStartWithF: item => Boolean(item.name.match(/^f/i)), // boolean "true" response into a shallow object
+    startingWith: item => item.name[0], // otherwise return is used as subgroup key (including undefined)
   },
   items: [
     { id: 12, name: 'Fluffy' },

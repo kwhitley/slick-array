@@ -144,12 +144,12 @@ class SlickArray extends Array {
         for (const path in this.$.groups) {
           const key = this.$.groups[path](item)
 
-          if (!key) continue
+          if (key === false) continue
 
-          if (typeof key === 'string') {
-            (this[path][key] = this[path][key] || []).push(item)
-          } else {
+          if (key === true) {
             this[path].push(item)
+          } else {
+            (this[path][key] = this[path][key] || []).push(item)
           }
         }
       }
@@ -172,14 +172,14 @@ class SlickArray extends Array {
       for (const [path, fn] of Object.entries(this.$.groups || {})) {
         const key = fn(item)
 
-        if (key) {
-          if (typeof key === 'string') { // dump into group
-            const index = this[path][key].indexOf(item)
-            this[path][key].splice(index, 1)
-          } else {
-            const index = this[path].indexOf(item)
-            this[path].splice(index, 1)
-          }
+        if (key === false) continue
+
+        if (key === true) {
+          const index = this[path].indexOf(item)
+          this[path].splice(index, 1)
+        } else {
+          const index = this[path][key].indexOf(item)
+          this[path][key].splice(index, 1)
         }
       }
     }

@@ -102,26 +102,20 @@ describe('Class: SlickArray(...args, config?:object)', () => {
       })
     })
 
-    // describe('by:string|array[string]|object --> automatically indexes by these key(s)', () => {
-    //   it('by:string --> { by: \'name\' }', () => {
-    //     const a = new SlickArray({ by: 'name' })
-
-    //     if (a.$.by.length !== 1) {
-    //       console.log(a)
-    //     }
-    //     expect(a.$.by.length).toBe(1)
-    //   })
-    //   it('by:array[string] --> { by: [\'id\', \'name\'] }', () => {
-    //     const a = new SlickArray({ by: ['id', 'name'] })
-
-    //     expect(a.$.by.length).toBe(2)
-    //   })
-    //   it('by:object --> { by: { id: i => i.id, name => i.name } }', () => {
-    //     const a = new SlickArray({ by: { id: i => i.id } })
-
-    //     expect(a.$.by.length).toBe(1)
-    //   })
-    // })
+    describe('by:string|array[string]|object --> automatically indexes by these key(s)', () => {
+      it('by:string --> { by: \'name\' }', () => {
+        const a = new SlickArray({ by: 'name' })
+        expect(Object.keys(a.$.by).length).toBe(1)
+      })
+      it('by:array[string] --> { by: [\'id\', \'name\'] }', () => {
+        const a = new SlickArray({ by: ['id', 'name'] })
+        expect(Object.keys(a.$.by).length).toBe(2)
+      })
+      it('by:object --> { by: { id: i => i.id, name => i.name } }', () => {
+        const a = new SlickArray({ by: { id: i => i.id } })
+        expect(Object.keys(a.$.by).length).toBe(1)
+      })
+    })
 
     describe('groups:object --> automatically creates that based on filter functions', () => {
       it('groups:object --> map of group-definitions, e.g. { groups: { hasId: i => !!i.id } }', () => {
@@ -129,6 +123,23 @@ describe('Class: SlickArray(...args, config?:object)', () => {
 
         expect(typeof a.hasId).toBe('object')
         expect(typeof a.$.groups.hasId).toBe('function')
+      })
+
+      it('can index into an undefined group', () => {
+        const a = new SlickArray({
+          items: CATS,
+          groups: { withMissingAttribute: i => i.missing }
+        })
+
+        expect(typeof a.withMissingAttribute).toBe('object')
+        expect(a.withMissingAttribute[undefined].length).toBe(3)
+
+        const removed = a[2]
+
+        expect(a.withMissingAttribute[undefined].includes(removed)).toBe(true)
+        a.remove(a[2])
+        expect(a.withMissingAttribute[undefined].includes(removed)).toBe(false)
+        expect(a.withMissingAttribute[undefined].length).toBe(2)
       })
     })
   })
@@ -326,7 +337,7 @@ describe('Class: SlickArray(...args, config?:object)', () => {
         expect(a.by.id[6].name).toEqual('Kitty')
       })
 
-      it('.that[key] --> returns array of matching items (when group definition returns Boolean', () => {
+      it('.[key] --> returns array of matching items (when group definition returns Boolean', () => {
         const a = new SlickArray({
           items: CATS,
           as: Cat,
