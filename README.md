@@ -70,9 +70,9 @@ const kittens = new SlickArray({
     id: item => item.id,
     name: item => item.name,
   },
-  that: {
-    startWithF: item => item.name.match(/^f/i), // any non-string, truthy response groups in shallow group
-    startWith: item => item.name[0], // if return is a String, use as key for subgroup
+  groups: {
+    thatStartWithF: item => item.name.match(/^f/i), // any non-string, truthy response groups in shallow group
+    startingWith: item => item.name[0], // if return is a String, use as key for subgroup
   },
   items: [
     { id: 12, name: 'Fluffy' },
@@ -90,14 +90,15 @@ kittens.by.id[12] // Kitten { id: 12, name: 'Fluffy' }
 kittens.by.name.Mittens // Kitten { id: 15, name: 'Mittens' }
 
 // or access groups via "that"
-kittens.that.startWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
-kittens.that.startWith.F // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
-kittens.that.startWith.M // [ Kitten { id: 15, name: 'Mittens' } ]
+kittens.thatStartWithF // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
+kittens.startingWith.F // [ Kitten { id: 12, name: 'Fluffy' }, Kitten { id: 3, name: 'Furious George' } ]
+kittens.startingWith.M // [ Kitten { id: 15, name: 'Mittens' } ]
 
 // you can keep adding items, and indexes will be added automatically
 kittens.push({ id: 2, name: 'Ringo' })
 kittens.length // 4
 kittens.by.name.Ringo.talk() // 'meow!' - it's a Kitten after all
+kittens.startingWith.R // [ Kitten { id: 2, name: 'Ringo' } ]
 ```
 
 ## Testing & Contributing
