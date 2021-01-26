@@ -27,8 +27,8 @@ yarn add slick-array
 - **Low memory overhead** - all internal structures are by-reference = very little memory overhead
 - **Small, with zero dependencies** - ~830 bytes gzipped
 
-## new SlickArray(...args, options = {})
-#### Options (optional, as is each option)
+# new SlickArray(...args, options = {})
+### Options (all optional)
 
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
