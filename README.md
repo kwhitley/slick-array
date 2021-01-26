@@ -21,12 +21,21 @@ yarn add slick-array
 
 ## Features
 
-- [x] **Nearly fully interchangeable with built-in Array** - (which it extends) with the one exception that in order to preserve indexes/groups, you need to use the functional modifiers of the array structure (e.g. `push()`, `pop()`, `shift()`, `unshift()`, `splice()`), rather than direct setting of elements (e.g. `items[1] = 'something'`)
-- [x] **Creates lookups upon entry/exit** - this is *much* faster than scanning for an item when needed.  All work is done up front upon entry/exit, leaving zero-cost index behind.  **CAVEAT: This is several times slower for large push operations than a native Array, so if you need performance and no lookups, please use Array instead!**
-- [x] **Creates groups upon extry/exit** - take individual record lookups a step further with groups (and subgroups), where groups are created/injected into upon entry/exit as well (at an additional cost).
-- [x] **Optionally cast items with a class/function** - SlickArray can automatically cast new items to a defined class/function.
-- [x] **Low memory overhead** - all internal structures are by-reference, meaning very little memory overhead beyond your raw data.
-- [x] **Small, with zero dependencies** - ~820 bytes gzipped.  We'll work to minimize this as much as possible, to justify using in minimalist projects.
+- **Interchangeable with built-in Array*** - with the one exception that in order to preserve indexes/groups, you need to use the functional modifiers of the array structure (e.g. `push()`, `pop()`, `shift()`, `unshift()`, `splice()`) to add/remove/replace items, rather than direct setting of elements (e.g. don't do this: `items[1] = 'something'`)
+- **Creates indexes and groups upon extry/exit** - lookup tables and groups/subgroups are created upon item entry/exit
+- **Cast items with a class/function** - SlickArray can automatically cast new items to a class/function
+- **Low memory overhead** - all internal structures are by-reference = very little memory overhead
+- **Small, with zero dependencies** - ~830 bytes gzipped
+
+## new SlickArray(...args, options = {})
+#### Options (optional, as is each option)
+
+| Name | Type(s) | Description | Examples |
+| --- | --- | --- | --- |
+| `as` | `class`, `function` | casts items as class\|function on entry | `as: Kitten`<br />`as: i => ({ ...i })` |
+| `by` | `String`, `Array`, `Object` | create indexes | `by: 'id'`<br />`by: ['id', 'name']`<br />`by: { id: i => i.id }` |
+| `groups` | `String`, `Array`, `Object` | create groups and/or subgroups | `groups: 'isValid'`<br />`groups: ['isValid']`<br />`groups: { valid: i => !!i.isValid }`<br />`groups: { valid: i => i.isValid ? 'yes' : 'no' }` |
+| `items` | `Array` | preload items upon construction | `items: [14, 15, 16]`<br />`items: [{ id: 14 }, { id: 15 }]` |
 
 # Simple Example
 ```js
