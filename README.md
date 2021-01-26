@@ -9,15 +9,7 @@
 Native JavaScript Array, but extended with custom indexing and group support for super-fast lookups.
 
 # Why?
-Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds.
-
-# Disclaimer
-**Over the next few days, I'll be finalizing the API (especially around groups) and output structure.  This may change substantially before finalizing as a 1.x release.  During this period, all feedback/suggestions are welcome via [issues](https://github.com/kwhitley/slick-array/issues)! **
-
-## Installation
-```
-yarn add slick-array
-```
+Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds!
 
 ## Features
 
@@ -26,6 +18,11 @@ yarn add slick-array
 - **Cast items with a class/function** - SlickArray can automatically cast new items to a class/function
 - **Low memory overhead** - all internal structures are by-reference = very little memory overhead
 - **Small, with zero dependencies** - ~830 bytes gzipped
+
+## Installation
+```
+yarn add slick-array
+```
 
 # new SlickArray(...args, options = {})
 ### Options (all optional)
