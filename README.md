@@ -8,8 +8,10 @@
 
 Native JavaScript Array, but extended with custom indexing and group support for super-fast lookups.
 
-# Why?
-Collections often need a fast lookup (e.g. by ID) where an Object would be appropriate, yet we want to iterate over them like a standard Array.  This combines the best of both worlds!
+## Installation
+```
+yarn add slick-array
+```
 
 ## Features
 
@@ -18,21 +20,6 @@ Collections often need a fast lookup (e.g. by ID) where an Object would be appro
 - **Cast items with a class/function** - SlickArray can automatically cast new items to a class/function
 - **Low memory overhead** - all internal structures are by-reference = very little memory overhead
 - **Small, with zero dependencies** - ~830 bytes gzipped
-
-## Installation
-```
-yarn add slick-array
-```
-
-# new SlickArray(...args, options = {})
-### Options (all optional)
-
-| Name | Type(s) | Description | Examples |
-| --- | --- | --- | --- |
-| `as` | `class`, `function` | casts items as class\|function on entry | `as: Kitten`<br />`as: i => ({ ...i })` |
-| `by` | `String`, `Array`, `Object` | create indexes | `by: 'id'`<br />`by: ['id', 'name']`<br />`by: { id: i => i.id }` |
-| `groups` | `String`, `Array`, `Object` | create groups and/or subgroups | `groups: 'isValid'`<br />`groups: ['isValid']`<br />`groups: { valid: i => !!i.isValid }`<br />`groups: { valid: i => i.isValid ? 'yes' : 'no' }` |
-| `items` | `Array` | preload items upon construction | `items: [14, 15, 16]`<br />`items: [{ id: 14 }, { id: 15 }]` |
 
 # Simple Example
 ```js
@@ -54,6 +41,16 @@ items.map(i => i.name)              // ['foo', 'bar', 'baz']
 items.by.id[2] // { id: 2, name: 'bar' }
 items.by.name.foo // { id: 1, name: 'foo' }
 ```
+
+# new SlickArray(...args, options = {})
+### Options (all optional)
+
+| Name | Type(s) | Description | Examples |
+| --- | --- | --- | --- |
+| `as` | `class`, `function` | casts items as class\|function on entry | `as: Kitten`<br />`as: i => ({ ...i })` |
+| `by` | `String`, `Array`, `Object` | create indexes | `by: 'id'`<br />`by: ['id', 'name']`<br />`by: { id: i => i.id }` |
+| `groups` | `String`, `Array`, `Object` | create groups and/or subgroups | `groups: 'isValid'`<br />`groups: ['isValid']`<br />`groups: { valid: i => !!i.isValid }`<br />`groups: { valid: i => i.isValid ? 'yes' : 'no' }` |
+| `items` | `Array` | preload items upon construction | `items: [14, 15, 16]`<br />`items: [{ id: 14 }, { id: 15 }]` |
 
 # Advanced Example
 ```js
@@ -77,8 +74,10 @@ const kittens = new SlickArray({
     name: item => item.name,
   },
   groups: {
-    thatStartWithF: item => Boolean(item.name.match(/^f/i)), // boolean "true" response into a shallow object
-    startingWith: item => item.name[0], // otherwise return is used as subgroup key (including undefined)
+    // boolean "true" response into a shallow object
+    thatStartWithF: item => Boolean(item.name.match(/^f/i)),
+    // otherwise return is used as subgroup key (including undefined)
+    startingWith: item => item.name[0],
   },
   items: [
     { id: 12, name: 'Fluffy' },
