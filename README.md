@@ -15,11 +15,15 @@ yarn add slick-array
 
 ## Features
 
-- **Interchangeable with built-in Array*** - with the one exception that in order to preserve indexes/groups, you need to use the functional modifiers of the array structure (e.g. `push()`, `pop()`, `shift()`, `unshift()`, `splice()`) to add/remove/replace items, rather than direct setting of elements (e.g. don't do this: `items[1] = 'something'`)
-- **Creates indexes and groups upon extry/exit** - lookup tables and groups/subgroups are created upon item entry/exit
-- **Cast items with a class/function** - SlickArray can automatically cast new items to a class/function
-- **Low memory overhead** - all internal structures are by-reference = very little memory overhead
-- **Small, with zero dependencies** - ~830 bytes gzipped
+- **Creates indexes and groups upon extry/exit**
+- **Cast items with a class/function**
+- **Low memory overhead**
+- **Small, with zero dependencies** ~830 bytes gzipped
+- **Interchangeable with built-in Array***
+
+ * *CAVEAT: in order to preserve indexes/groups, use `push`/`pop`/`shift`/`unshift`/`splice` to add/remove/replace items, rather than direct setting of elements (e.g. don't do this: `items[1] = 'something new'`)*
+
+ ** *PERFORMANCE: For situations where utmost performance is required and lookups are infrequent, use a native Array.  It's much faster!*
 
 # Simple Example
 ```js
@@ -51,6 +55,7 @@ items.by.name.foo // { id: 1, name: 'foo' }
 | `by` | `String`, `Array`, `Object` | create indexes | `by: 'id'`<br />`by: ['id', 'name']`<br />`by: { id: i => i.id }` |
 | `groups` | `String`, `Array`, `Object` | create groups and/or subgroups | `groups: 'isValid'`<br />`groups: ['isValid']`<br />`groups: { valid: i => !!i.isValid }`<br />`groups: { valid: i => i.isValid ? 'yes' : 'no' }` |
 | `items` | `Array` | preload items upon construction | `items: [14, 15, 16]`<br />`items: [{ id: 14 }, { id: 15 }]` |
+
 
 # Advanced Example
 ```js
