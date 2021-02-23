@@ -13,18 +13,6 @@ Native JavaScript Array, but extended with custom indexing and group support for
 yarn add slick-array
 ```
 
-## Features
-
-- **Creates indexes and groups upon extry/exit**
-- **Cast items with a class/function**
-- **Low memory overhead**
-- **Small, with zero dependencies** ~830 bytes gzipped
-- **Interchangeable with built-in Array***
-
- * *CAVEAT: in order to preserve indexes/groups, use `push`/`pop`/`shift`/`unshift`/`splice` to add/remove/replace items, rather than direct setting of elements (e.g. don't do this: `items[1] = 'something new'`)*
-
- ** *PERFORMANCE: For situations where utmost performance is required and lookups are infrequent, use a native Array.  It's much faster!*
-
 # Simple Example
 ```js
 import { SlickArray } from 'slick-array'
@@ -46,8 +34,20 @@ items.by.id[2] // { id: 2, name: 'bar' }
 items.by.name.foo // { id: 1, name: 'foo' }
 ```
 
-# new SlickArray(...args, options = {})
-### Options (all optional)
+## Features
+
+- **Creates indexes and groups upon extry/exit**
+- **Cast items with a class/function**
+- **Low memory overhead**
+- **Small, with zero dependencies** ~830 bytes gzipped
+- **Interchangeable with built-in Array***
+
+ * *CAVEAT: in order to preserve indexes/groups, use `push`/`pop`/`shift`/`unshift`/`splice` to add/remove/replace items, rather than direct setting of elements (e.g. don't do this: `items[1] = 'something new'`)*
+
+ ** *PERFORMANCE: For situations where utmost performance is required and lookups are infrequent, use a native Array.  It's much faster!*
+
+# Options API
+### `new SlickArray(...args?, options = {})`
 
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
